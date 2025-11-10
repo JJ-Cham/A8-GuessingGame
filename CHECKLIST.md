@@ -13,7 +13,7 @@ your work, please indicate the status of each item
 
 __**YES**___ 1 pt: Class DecisionTree is a correctly designed subclass of BinaryTree
 
-_____ 1 pt: Method followPath correctly returns the indicated node of a decision tree
+__**YES**___ 1 pt: Method followPath correctly returns the indicated node of a decision tree
 
 _____ 2 pts: Plays a game that moves correctly through the tree to a guess
 
@@ -30,22 +30,22 @@ _____ 1 pt: Game plays using tree from file and updates it before exiting
 
 ## General Items:
 
-_____ 4 pts: Program compiles without errors or warnings
+__**YES**___ 4 pts: Program compiles without errors or warnings
 
-_____ 2 pts: Executes fully & consistently without crashing (exception/freeze)
+__**YES**___ 2 pts: Executes fully & consistently without crashing (exception/freeze)
 
-_____ 2 pt: Complies with style guidelines (missing items 1 pt each):
+__**YES**___ 2 pt: Complies with style guidelines (missing items 1 pt each):
 
-      _____ Classes & class members all have Javadoc header comments
+      __**YES**___ Classes & class members all have Javadoc header comments
 
-      _____ Clear and consistent indentation of bracketed sections
+      __**YES**___ Clear and consistent indentation of bracketed sections
 
-      _____ Adheres to Java conventions on naming & capitalization
+      __**YES**___ Adheres to Java conventions on naming & capitalization
 
-      _____ Methods & variables all have clear and accurate names
+      __**YES**___ Methods & variables all have clear and accurate names
 
-      _____ Methods avoid confusing side effects
+      __**YES**___ Methods avoid confusing side effects
 
-_____ 1 pt: All required files included with submission (including completed checklist file)
+_**YES**____ 1 pt: All required files included with submission (including completed checklist file)
 
-_____ 1 pt: readme.md contains reflection on the assignment
+__**YES**___ 1 pt: readme.md contains reflection on the assignment
