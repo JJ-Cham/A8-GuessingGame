@@ -91,8 +91,43 @@ public class DecisionTree extends BinaryTree<String> {
             throw new IllegalArgumentException("Path can only contain 'Y' or 'N'");
         }
     }
-    //mainly for testing
+
     
+    /** Save the tree to a file using preorder traversal */
+    public void save(PrintWriter out) {
+        if (isLeaf()) {
+            out.println("A:" + getData());
+        } else {
+            out.println("Q:" + getData());
+            ((DecisionTree)getLeft()).save(out);
+            ((DecisionTree)getRight()).save(out);
+        }
+    }
+
+    /** Load a tree from a file using preorder traversal */
+    public static DecisionTree load(Scanner in) {
+        if (!in.hasNextLine()) return null;
+
+        String line = in.nextLine().trim();
+        if (line.startsWith("Q:")) {
+            String question = line.substring(2);
+            DecisionTree left = load(in);
+            DecisionTree right = load(in);
+            return new DecisionTree(question, left, right);
+        } else if (line.startsWith("A:")) {
+            String answer = line.substring(2);
+            return new DecisionTree(answer);
+        } else {
+            return null; // unexpected format
+        }
+    }
+
+    /** Helper to check if node is a leaf */
+    public boolean isLeaf() {
+        return (getLeft() == null && getRight() == null);
+    }
+    //mainly for testing
+
     public static void main(String[] args) {
         // Build a small test tree manually
         DecisionTree tree = new DecisionTree("Is it a mammal?");

@@ -3,13 +3,46 @@ import java.util.*;
 import java.util.Scanner;
 
 public class AnimalGuess {
+    private static final String FILENAME = "AnimalTree.txt";
 
     private static Scanner console = new Scanner(System.in);
 
-    public static void main(String[] args){
-        DecisionTree tree = buildInitialTree();
-        playGame(tree); 
+    public static void main(String[] args) {
+        DecisionTree tree = null;
+
+        // Try loading existing tree
+        try {
+            Scanner fileIn = new Scanner(new File(FILENAME));
+            tree = DecisionTree.load(fileIn);
+            fileIn.close();
+            System.out.println("Loaded previous knowledge base.");
+        } catch (FileNotFoundException e) {
+            System.out.println("No previous data found. Starting new tree.");
+            tree = buildInitialTree();
+        }
+
+        // Play loop
+        do {
+            playGame(tree);
+        } while (askYesNo("Play again?"));
+
+        // Save updated tree
+        try {
+            PrintWriter out = new PrintWriter(new FileWriter(FILENAME));
+            tree.save(out);
+            out.close();
+            System.out.println("Knowledge saved to " + FILENAME);
+        } catch (IOException e) {
+            System.out.println("Error saving file: " + e.getMessage());
+        }
+
+        System.out.println("Goodbye!");
     }
+
+    // public static void main(String[] args){
+    //     DecisionTree tree = buildInitialTree();
+    //     playGame(tree); 
+    // }
 
 
     //load from file in phase 3 
