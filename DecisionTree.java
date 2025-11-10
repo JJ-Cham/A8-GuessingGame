@@ -9,90 +9,110 @@ import java.util.Scanner;
 public class DecisionTree extends BinaryTree<String> {
 
     /** This constructor creates a leaf node */
+    /** 
+     * Constructs a leaf node with the given data.
+     * @param data The question or animal name stored at this node.
+     */
     public DecisionTree(String data) {
         super(data);
     }
 
     /** This constructor creates a branch node */
+    /** 
+     * Constructs a branch node with a left and right subtree.
+     * @param data The question or animal name stored at this node.
+     * @param left The left child (yes branch).
+     * @param right The right child (no branch).
+     */
     public DecisionTree(String data, DecisionTree left, DecisionTree right) {
         super(data, left, right);
     }
 
-    //make tree building easier
-    public void attachLeft(DecisionTree left){
-        setLeft(left);
-    }
-    public void attachRight(DecisionTree right){
-        setRight(right);
+    /**deep copy constructor*/
+    /**
+     * Constructs a deep copy of another DecisionTree.
+     * @param tree The tree to copy.
+     */
+    public DecisionTree(DecisionTree tree) {
+        super(tree);
     }
 
-    //follow the tree path, if Y goes left, N goes right
+    // //make tree building easier
+    // public void attachLeft(DecisionTree left){
+    //     setLeft(left);
+    // }
+    // public void attachRight(DecisionTree right){
+    //     setRight(right);
+    // }
+
+    //iteratively follow path to return node
+    // //follow the tree path, if Y goes left, N goes right
+    // public DecisionTree followPath(String path){
+    //     DecisionTree current = this;
+    //     for(int i = 0; i < path.length(); i++){
+    //         char step = path.charAt(i);
+    //         if(step == 'Y'){
+    //             current = (DecisionTree) current.getLeft();
+    //         } else if(step == 'N'){
+    //             current = (DecisionTree) current.getRight();
+    //         } else {
+    //             throw new IllegalArgumentException("Path can only contain 'Y' or 'N'");
+    //         }
+    //     }
+    //     return current;
+    // }
+
+    //recurives version of followPath
+    /**
+     * followPath - recursively follows a Y/N path through the tree
+     * @param path A string like "YNNY" (Y = left, N = right)
+     * @return The DecisionTree node reached after following the path
+     */
     public DecisionTree followPath(String path){
-        DecisionTree current = this;
-        for(int i = 0; i < path.length(); i++){
-            char step = path.charAt(i);
-            if(step == 'Y'){
-                current = (DecisionTree) current.getLeft();
-            } else if(step == 'N'){
-                current = (DecisionTree) current.getRight();
-            } else {
-                throw new IllegalArgumentException("Path can only contain 'Y' or 'N'");
-            }
+        //base case
+        if (path.isEmpty() || path ==null){
+            return this;
         }
-        return current;
+
+        char step = path.charAt(0);
+        String remainingPath = path.substring(1);
+
+        if(step == 'Y'){
+            if (this.getLeft() == null){
+                return null;
+            }
+            return ((DecisionTree) this.getLeft()).followPath(remainingPath);
+        } else if(step == 'N'){
+            if (this.getRight() == null){
+                return null;
+            }
+            return ((DecisionTree) this.getRight()).followPath(remainingPath);
+        } else {
+            throw new IllegalArgumentException("Path can only contain 'Y' or 'N'");
+        }
     }
+    //mainly for testing
+    
+    public static void main(String[] args) {
+        // Build a small test tree manually
+        DecisionTree tree = new DecisionTree("Is it a mammal?");
+        tree.setLeft(new DecisionTree("Does it have hooves?"));
+        tree.setRight(new DecisionTree("Is it a reptile?"));
 
-    //write each nodes patha and data to a file 
-    public void writeToFile(String filename) throws IOException {
-        PrintWriter out = new PrintWriter(new FileWriter(filename));
-        Queue<DecisionTree> nodes = new LinkedList<>();
-        Queue<String> paths = new LinkedList<>();
-        nodes.add(this);
-        paths.add("");
+        tree.getLeft().setLeft(new DecisionTree("Cow"));
+        tree.getLeft().setRight(new DecisionTree("Horse"));
+        tree.getRight().setLeft(new DecisionTree("Crocodile"));
+        tree.getRight().setRight(new DecisionTree("Mosquito"));
 
-        while (!nodes.isEmpty()) {
-            DecisionTree node = nodes.remove();
-            String path = paths.remove();
-            out.println((path.isEmpty() ? " " : path + " ") + node.getData());
+        // Test direct access (sanity check)
+        System.out.println("Left-Right data: " + tree.getLeft().getRight().getData());
+        // Output: Horse
 
-            if (node.getLeft() != null) {
-                nodes.add((DecisionTree) node.getLeft());
-                paths.add(path + "Y");
-            }
-            if (node.getRight() != null) {
-                nodes.add((DecisionTree) node.getRight());
-                paths.add(path + "N");
-            }
-        }
-
-        out.close();
-    }
-
-    //read tree from file
-    public static DecisionTree readFromFile(String filename) throws IOException {
-        Scanner in = new Scanner(new File(filename));
-        DecisionTree root = null;
-
-        while (in.hasNextLine()) {
-            String line = in.nextLine();
-            int split = line.indexOf(' ');
-            String path = line.substring(0, split).trim();
-            String data = line.substring(split + 1);
-
-            if (path.isEmpty()) {
-                root = new DecisionTree(data);
-            } else {
-                String parentPath = path.substring(0, path.length() - 1);
-                char direction = path.charAt(path.length() - 1);
-                DecisionTree parent = root.followPath(parentPath);
-                DecisionTree child = new DecisionTree(data);
-                if (direction == 'Y') parent.attachLeft(child);
-                else parent.attachRight(child);
-            }
-        }
-
-        in.close();
-        return root;
+        // Test followPath method
+        System.out.println("Path 'YY' -> " + tree.followPath("YY").getData()); // should be Cow
+        System.out.println("Path 'YN' -> " + tree.followPath("YN").getData()); // should be Horse
+        System.out.println("Path 'NY' -> " + tree.followPath("NY").getData()); // should be Crocodile
+        System.out.println("Path 'NN' -> " + tree.followPath("NN").getData()); // should be Mosquito
     }
 }
 
