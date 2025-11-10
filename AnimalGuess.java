@@ -1,5 +1,5 @@
 import java.io.*;
-import java.util.*;
+// import java.util.*;
 import java.util.Scanner;
 
 public class AnimalGuess {
@@ -16,10 +16,17 @@ public class AnimalGuess {
             tree = DecisionTree.load(fileIn);
             fileIn.close();
             System.out.println("Loaded previous knowledge base.");
+
+            if (tree == null) {
+                System.out.println("File was empty or invalid — starting new tree.");
+                tree = buildInitialTree();
+            }
+
         } catch (FileNotFoundException e) {
             System.out.println("No previous data found. Starting new tree.");
             tree = buildInitialTree();
         }
+
 
         // Play loop
         do {
@@ -74,47 +81,66 @@ public class AnimalGuess {
     }
 
     //main game loop 
-    private static void playGame(DecisionTree tree){
-        System.out.println("Welcome to the Animal Guessing Game!");
-        boolean playAgain = true;
-        while(playAgain){
-            DecisionTree current = tree;
-            //traverse the tree
-            while(current.getLeft() != null && current.getRight() != null){
-                boolean answer = askYesNo(current.getData());
-                if(answer){
+
+    public static void playGame(DecisionTree tree) {
+        DecisionTree current = tree;
+
+        // Safety check
+        if (current == null) {
+            System.out.println("Error: tree is empty.");
+            return;
+        }
+
+        while (!current.isLeaf()) {
+            boolean answer = askYesNo(current.getData());
+            if (answer) {
+                if (current.getLeft() != null) {
                     current = (DecisionTree) current.getLeft();
                 } else {
-                    current = (DecisionTree) current.getRight();
+                    System.out.println("Error: Missing left child!");
+                    return;
                 }
-            }
-            //make a guess
-            boolean correct = askYesNo("Is it a " + current.getData() + "?");
-            if(correct){
-                System.out.println("Yay! I guessed your animal!");
             } else {
-                //learn new animal
-                String userAnimal = prompt("What animal were you thinking of?");
-                String question = prompt("Please give me a question that would distinguish a " + userAnimal + " from a " + current.getData() + ".");
-                boolean answerForUserAnimal = askYesNo("For a " + userAnimal + ", what is the answer to your question?");
-                //create new nodes
-                DecisionTree userAnimalNode = new DecisionTree(userAnimal);
-                DecisionTree oldAnimalNode = new DecisionTree(current.getData());
-                //update current node to be the question
-                current.setData(question);
-                if(answerForUserAnimal){
-                    current.setLeft(userAnimalNode);
-                    current.setRight(oldAnimalNode);
+                if (current.getRight() != null) {
+                    current = (DecisionTree) current.getRight();
                 } else {
-                    current.setLeft(oldAnimalNode);
-                    current.setRight(userAnimalNode);
+                    System.out.println("Error: Missing right child!");
+                    return;
                 }
-                System.out.println("Thanks! I've learned something new.");
             }
-            playAgain = askYesNo("Would you like to play again?");
         }
-        System.out.println("Thanks for playing!");
+
+        // We are now at a leaf node
+        boolean correct = askYesNo("Is your animal a " + current.getData() + "?");
+        if (correct) {
+            System.out.println("I guessed it!");
+        } else {
+            System.out.println("I got it wrong. Please help me learn.");
+
+            System.out.print("What was your animal? ");
+            String animal = console.nextLine();
+
+            System.out.print("Type a yes/no question that distinguishes " + animal + " from " + current.getData() + ": ");
+            String question = console.nextLine();
+
+            boolean yesForNewAnimal = askYesNo("Would the answer be 'yes' for " + animal + "?");
+
+            // Create new subtrees
+            DecisionTree newAnimal = new DecisionTree(animal);
+            DecisionTree oldAnimal = new DecisionTree(current.getData());
+
+            if (yesForNewAnimal) {
+                current.setData(question);
+                current.setLeft(newAnimal);
+                current.setRight(oldAnimal);
+            } else {
+                current.setData(question);
+                current.setLeft(oldAnimal);
+                current.setRight(newAnimal);
+            }
+        }
     }
+
 
     //main 
     // public static void main(String [] args){

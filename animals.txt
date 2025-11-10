@@ -1,3 +1,5 @@
 Q:Does it waddle?
+Q:No
+A:Dog
 A:Is it a penguin?
 A:Is it a lion?
