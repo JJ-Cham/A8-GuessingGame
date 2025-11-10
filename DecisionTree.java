@@ -94,6 +94,11 @@ public class DecisionTree extends BinaryTree<String> {
 
     
     /** Save the tree to a file using preorder traversal */
+    /**
+     * Saves the current tree to a PrintWriter in preorder format.
+     * Questions are prefixed with "Q:" and answers with "A:".
+     * @param out The PrintWriter to write the tree to.
+     */
     public void save(PrintWriter out) {
         if (isLeaf()) {
             out.println("A:" + getData());
@@ -105,6 +110,12 @@ public class DecisionTree extends BinaryTree<String> {
     }
 
     /** Load a tree from a file using preorder traversal */
+    /**
+     * Loads a DecisionTree from a Scanner in preorder format.
+     * Questions are prefixed with "Q:" and answers with "A:".
+     * @param in The Scanner to read the tree from.
+     * @return The root of the loaded DecisionTree.
+     */
     public static DecisionTree load(Scanner in) {
         if (!in.hasNextLine()) return null;
 
@@ -123,11 +134,18 @@ public class DecisionTree extends BinaryTree<String> {
     }
 
     /** Helper to check if node is a leaf */
+    /**
+     * Checks if the current node is a leaf (no children).
+     * @return true if leaf node, false otherwise.
+     */
     public boolean isLeaf() {
         return (getLeft() == null && getRight() == null);
     }
     //mainly for testing
-
+    /**
+     * Main method for testing the DecisionTree class.
+     * @param args Command line arguments (not used).
+     */
     public static void main(String[] args) {
         // Build a small test tree manually
         DecisionTree tree = new DecisionTree("Is it a mammal?");

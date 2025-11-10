@@ -7,6 +7,9 @@ public class AnimalGuess {
 
     private static Scanner console = new Scanner(System.in);
 
+    /*
+     * Main method to run the animal guessing game.
+     */
     public static void main(String[] args) {
         DecisionTree tree = null;
 
@@ -53,6 +56,10 @@ public class AnimalGuess {
 
 
     //load from file in phase 3 
+    /**
+     * Builds the initial decision tree with two animals.
+     * @return The root of the initial DecisionTree.
+     */
     private static DecisionTree buildInitialTree(){
         DecisionTree root = new DecisionTree("Does it waddle?");
         root.setLeft(new DecisionTree("Is it a penguin?"));
@@ -61,11 +68,21 @@ public class AnimalGuess {
     }
 
     //make easier to read user input
+    /**
+     * Prompts the user with a message and returns their input.
+     * @param message The prompt message.
+     * @return The user's input as a String.
+     */
     private static String prompt(String message){
         System.out.print(message + " ");
         return console.nextLine().trim();
     }
 
+    /**
+     * Asks a yes/no question and returns true for yes, false for no.
+     * @param message
+     * @return boolean
+     */
     private static boolean askYesNo(String message){
         while(true){
             System.out.print(message + " (Y/N): ");
@@ -81,7 +98,10 @@ public class AnimalGuess {
     }
 
     //main game loop 
-
+    /**
+     * Plays one round of the animal guessing game using the provided decision tree.
+     * @param tree
+     */
     public static void playGame(DecisionTree tree) {
         DecisionTree current = tree;
 
